@@ -74,16 +74,7 @@
             }
         </tbody>
     </table>
-    <table id="hiddenTable2" class="hiddenTable2 col-lg-12" border="0" >
-        
-        <thead>
-            <tr>
-                <th><center> <font size="3" >No Records Found </font></center></th>
-            </tr>
-            
-        </thead>
-        <tr></tr>
-    </table>
+  
 
 
 
@@ -157,8 +148,10 @@
                     }
                     else {
 
+                      
                         $('#tblItems tbody').empty();
-                        $(".hiddenTable2").show();
+                        var norec = '<tbody><tr><td colspan="4"><center> <font size="3" >No Records Found </font></center></td></tr ></tbody>';
+                        $('#tblItems').append(norec);
                     }
                 },
                 error: function () {
