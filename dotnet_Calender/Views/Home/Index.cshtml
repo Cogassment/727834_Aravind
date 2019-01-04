@@ -1,0 +1,184 @@
+﻿@model IEnumerable<Arvind_Project_Ado.Models.ItemModel>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Records</title>
+</head>
+<body>
+    <br />
+    <h2>Records</h2>
+    <br />
+    <div style="float:right">
+        From:
+        <input type="date" id="from" value=""  />
+
+        To:
+        <input type="date" id="to" value="" />
+       
+
+       <center><input id="Submit1" type="submit" value="Submit" /></center>
+        <script>
+            let today = new Date().toISOString().substr(0, 10);
+            document.querySelector("#from").value = today;
+            document.querySelector("#to").value = today;
+
+        </script>
+    </div>
+    <br />
+    <br />
+    <br/>
+    
+    <table id="tblItems" class="table" border="1">
+        <thead>
+            <tr>
+                <th>Customer Id</th>
+                <th>Name</th>
+                <th>  Date  </th>
+                <th>Operation</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr>
+
+                    <td class="Id">
+                        <span>@item.Id</span>
+                    </td>
+                    <td class="Name">
+                        <span>@item.Name</span>
+                        <input type="text" value="@item.Name" style="display:none" />
+                    </td>
+                    <td class="Date">
+                        <span>@item.DateFormat</span>
+                        <input type="text" value="@item.DateFormat" style="display:none" />
+
+                    </td>
+                    <td>
+                        <a id="btnDelete" type="button" value="Delete" class="Delete btn btn-primary">
+                            <span class="glyphicon glyphicon-trash"></span>
+                            <span> Delete</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table id="hiddenTable2" class="hiddenTable2 col-lg-12" border="0" >
+        
+        <thead>
+            <tr>
+                <th><center> <font size="3" >No Records Found </font></center></th>
+            </tr>
+            
+        </thead>
+        <tr></tr>
+    </table>
+
+
+
+
+    <script type="text/javascript">
+
+        //Delete event handler.
+        $("body").on("click", "#tblItems .Delete", function () {
+            //to make a alert box to delete a row
+            if (confirm("Are you sure want to delete this row ?")) {
+                //to get a row
+                var row = $(this).closest("tr");
+                //to get a id in a row
+                var Id = row.find("span").html();
+                //ajax funtion
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/Delete",
+                    data: '{Id: ' + Id + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (xhr) {
+
+                        if ($("#tblItems tr").length > 2) {
+                            row.remove();
+                        } else {
+                            row.find("span").html('&nbsp;');
+                        }
+                    }
+
+                });
+            }
+        });
+
+        //Searching event handler.
+
+
+        $("#Submit1").on("click", function () {
+
+            var date1 = new Date($('#from').val());
+            var date2 = new Date($('#to').val());
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/SearchItem",
+                data: JSON.stringify({
+                    d1: date1
+                    , d2: date2
+                }),
+
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $('#tblItems tbody').empty();
+                    $(".hiddenTable2").hide();
+                    var trHTML = '';
+                    if (response.length > 0) {
+                        $.each(response, function (i, item) {
+                            trHTML += '<tr>';
+                            trHTML += '<td><span>' + item.Id + '</span></td>' +
+                                '<td>' + item.Name + '</td>' +
+                                '<td>' + item.DateFormat + '</td>' +
+                                '<td><a id="btnDelete" type="button" value="Delete" class="Delete btn btn-primary">' +
+                                '<span class="glyphicon glyphicon-trash" ></span><span> Delete</span> </a ></td > ';
+                            trHTML += '</tr>';
+                        });
+                        $('#tblItems tbody').append(trHTML);
+
+
+
+                    }
+                    else {
+
+                        $('#tblItems tbody').empty();
+                        $(".hiddenTable2").show();
+                    }
+                },
+                error: function () {
+                    alert('Please Enter a Valid Date');
+                }
+            });
+        });
+
+        function Dateformat(userDate) {
+            var s = userDate.slice(6, 19);
+            var n = parseInt(s);
+            var date = new Date(n),
+                yr = date.getFullYear(),
+                month = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth(),
+                day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+
+                newDate = month + '/' + day + '/' + yr;
+            return newDate;
+
+        }
+    </script>
+</body>
+</html>
