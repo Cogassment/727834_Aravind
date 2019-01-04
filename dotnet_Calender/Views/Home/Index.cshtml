@@ -18,13 +18,13 @@
     <br />
     <div style="float:right">
         From:
-        <input type="date" id="from" value=""  />
+        <input type="date" id="from" value=""/>
 
         To:
-        <input type="date" id="to" value="" />
-       
+        <input type="date" id="to" value=""/>
 
-       <center><input id="Submit1" type="submit" value="Submit" /></center>
+
+        <center><input id="Submit1" type="submit" value="Submit" /></center>
         <script>
             let today = new Date().toISOString().substr(0, 10);
             document.querySelector("#from").value = today;
@@ -34,8 +34,8 @@
     </div>
     <br />
     <br />
-    <br/>
-    
+    <br />
+
     <table id="tblItems" class="table" border="1">
         <thead>
             <tr>
@@ -74,7 +74,7 @@
             }
         </tbody>
     </table>
-  
+
 
 
 
@@ -129,6 +129,7 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
                     $('#tblItems tbody').empty();
+                    //   $(".hiddenTable2").hide();
                     var trHTML = '';
                     if (response.length > 0) {
                         $.each(response, function (i, item) {
@@ -147,7 +148,7 @@
                     }
                     else {
 
-                      
+                          
                         $('#tblItems tbody').empty();
                         var norec = '<tbody><tr><td colspan="4"><center> <font size="3" >No Records Found </font></center></td></tr ></tbody>';
                         $('#tblItems').append(norec);
